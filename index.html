@@ -149,7 +149,7 @@ body::before {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Photo slot */
+/* Photo slot in Entry */
 .photo-slot {
   width: 90px;
   height: 90px;
@@ -714,26 +714,38 @@ body::before {
   position: relative;
 }
 
+/* New Photo Slot - Rectangular 3:4 ID Style */
 .cert-photo-slot {
-  width: 90px;
-  height: 120px;
-  aspect-ratio: 3/4;
-  border-radius: 6px;
-  border: 3px solid var(--diwan-ink);
-  outline: 1.5px solid var(--diwan-kraft);
-  outline-offset: -4px;
-  margin: 0 auto 12px;
-  overflow: hidden;
-  cursor: pointer;
+  width: 105px;
+  height: 140px; 
+  margin: 0 auto 16px;
+  border: 3.5px solid var(--diwan-ink);
   background: var(--diwan-paper-soft);
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+/* Inner thin border */
+.cert-photo-slot::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border: 1px solid var(--diwan-ink);
+  pointer-events: none;
 }
 .cert-photo-slot img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  position: relative;
+  z-index: 1;
+}
+#certPhotoPlaceholder {
+  font-size: 2.2rem;
+  color: var(--diwan-kraft);
 }
 
 .cert-eyebrow {
@@ -767,92 +779,91 @@ body::before {
   color: var(--diwan-ink-soft);
 }
 
-/* Tiered stamps */
+/* Random Egyptian Phrase */
+.cert-phrase {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  color: var(--diwan-ink);
+  margin-top: 10px;
+  opacity: 0;
+  animation: fadeUpPhrase 0.6s var(--ease-diwan) 1.2s forwards;
+}
+@keyframes fadeUpPhrase {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Dynamic Tier Stamps */
 .cert-stamp {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-family: var(--font-display);
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   font-weight: 700;
-  padding: 8px 16px;
   margin: 12px auto;
   animation: boomStamp 0.6s var(--ease-diwan) forwards;
+  background: rgba(255, 255, 255, 0.2);
 }
-
-/* امتياز 90-100%: ذهبي/كهرماني غامق، دائرة مزدوجة بحواف مسننة */
-.cert-stamp.tier-excellent {
-  color: #B8860B;
-  border: 3px solid #B8860B;
-  background: rgba(184,134,11,0.08);
-  border-radius: 50%;
-  width: 90px;
-  height: 90px;
-  position: relative;
-}
-.cert-stamp.tier-excellent::before {
-  content: '';
-  position: absolute;
-  inset: -4px;
-  border-radius: 50%;
-  border: 2px dashed #C69A44;
-  animation: rotateSlow 20s linear infinite;
-}
-@keyframes rotateSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-/* جيد جدًا 75-89%: أخضر، دائرة عادية */
-.cert-stamp.tier-verygood {
-  color: var(--diwan-success);
-  border: 3px solid var(--diwan-success);
-  background: rgba(46,110,69,0.08);
-  border-radius: 50%;
-  width: 85px;
-  height: 85px;
-}
-
-/* مقبول 50-74%: كحلي، مستطيل بسيط */
-.cert-stamp.tier-good {
-  color: var(--diwan-ink);
-  border: 2px solid var(--diwan-ink);
-  background: rgba(38,52,74,0.06);
-  border-radius: 4px;
-  padding: 8px 20px;
-}
-
-/* ضعيف 25-49%: برتقالي محروق، مستطيل بحدود متقطعة */
-.cert-stamp.tier-weak {
-  color: #CC5500;
-  border: 2px dashed #CC5500;
-  background: rgba(204,85,0,0.06);
-  border-radius: 4px;
-  padding: 8px 18px;
-}
-
-/* مرفوض 0-24%: أحمر، مستطيل بخط قطري */
-.cert-stamp.tier-rejected {
-  color: var(--diwan-error);
-  border: 2px solid var(--diwan-error);
-  background: rgba(166,54,42,0.06);
-  border-radius: 4px;
-  padding: 8px 18px;
-  position: relative;
-  overflow: visible;
-}
-.cert-stamp.tier-rejected::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 120%;
-  height: 2px;
-  background: var(--diwan-error);
-  transform: translate(-50%, -50%) rotate(-25deg);
-}
-
 @keyframes boomStamp {
   0% { transform: scale(0) rotate(-30deg); opacity: 0; }
   50% { transform: scale(1.2) rotate(5deg); opacity: 1; }
   100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+/* 90-100% */
+.stamp-excellent {
+  width: 90px;
+  height: 90px;
+  color: var(--diwan-amber);
+  border: 4px double var(--diwan-amber);
+  border-radius: 50%;
+  outline: 2px dashed var(--diwan-amber);
+  outline-offset: 3px;
+}
+/* 75-89% */
+.stamp-vgood {
+  width: 85px;
+  height: 85px;
+  color: var(--diwan-success);
+  border: 3px solid var(--diwan-success);
+  border-radius: 50%;
+}
+/* 50-74% */
+.stamp-acceptable {
+  width: 100px;
+  height: 55px;
+  color: var(--diwan-ink);
+  border: 3px solid var(--diwan-ink);
+  border-radius: 4px;
+}
+/* 25-49% */
+.stamp-weak {
+  width: 100px;
+  height: 55px;
+  color: var(--diwan-burnt);
+  border: 3px dashed var(--diwan-burnt);
+  border-radius: 4px;
+}
+/* 0-24% */
+.stamp-rejected {
+  width: 100px;
+  height: 55px;
+  color: var(--diwan-error);
+  border: 3px solid var(--diwan-error);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+.stamp-rejected::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -20%;
+  width: 140%;
+  height: 3px;
+  background-color: var(--diwan-error);
+  transform: translateY(-50%) rotate(-20deg);
 }
 
 /* Badges */
@@ -874,20 +885,6 @@ body::before {
 }
 @keyframes badgeIn {
   from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Egyptian phrase */
-.cert-phrase {
-  font-family: var(--font-display);
-  font-size: 1.1rem;
-  color: var(--diwan-burnt);
-  margin-top: 8px;
-  opacity: 0;
-  animation: fadeUp 0.5s var(--ease-diwan) forwards;
-}
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -1035,7 +1032,7 @@ body::before {
     </div>
   </div>
 
-  <!-- Bonus Play (hidden initially) -->
+  <!-- Bonus Play -->
   <div id="bonusPlay" style="display:none; width:100%; max-width:460px; padding:0 16px;">
     <div class="bonus-score-indicator" id="bonusScoreInd">0</div>
     <div class="progress-stamps" id="bonusStamps"></div>
@@ -1046,7 +1043,7 @@ body::before {
     </div>
   </div>
 
-  <!-- Bonus End (hidden initially) -->
+  <!-- Bonus End -->
   <div id="bonusEnd" style="display:none;">
     <div class="bonus-end paper-texture" style="border-radius:12px; padding:32px 24px; max-width:420px; width:100%;">
       <div style="font-family:var(--font-display); font-size:1.3rem; margin-bottom:8px;">نتيجة المخاطرة</div>
@@ -1064,18 +1061,19 @@ body::before {
       <div class="cert-edge-top"></div>
       <div class="cert-edge-bottom"></div>
       <div class="cert-inner">
+        <!-- New rectangular dynamic photo slot -->
         <div class="cert-photo-slot" id="certPhotoSlot" onclick="document.getElementById('photoInput').click()">
           <span id="certPhotoPlaceholder">📷</span>
         </div>
         <div class="cert-eyebrow">شهادة تقدير — الديوان</div>
-        <div class="cert-title">أدّى التحدي بامتياز</div>
+        <div class="cert-title">نتائج التحدي النهائي</div>
         <div class="cert-name" id="certName"></div>
         <div class="cert-score-block">
           <div class="cert-score-num" id="certScoreNum">0</div>
           <div class="cert-score-label">نقطة</div>
+          <div class="cert-phrase" id="certPhrase"></div>
         </div>
-        <div class="cert-stamp" id="certStamp">مقبول</div>
-        <div class="cert-phrase" id="certPhrase"></div>
+        <div class="cert-stamp" id="certStamp"></div>
         <div class="badges-row" id="badgesRow"></div>
       </div>
     </div>
@@ -1087,6 +1085,13 @@ body::before {
 </div>
 
 <script>
+// ==================== POINTS CONFIG ====================
+const GAME_POINTS = {
+  mainCorrect: 10,
+  bonusCorrect: 15,
+  bonusWrong: 10
+};
+
 // ==================== STATE ====================
 const state = {
   playerName: '',
@@ -1108,13 +1113,10 @@ const state = {
   bonusCurrentQ: 0,
   bonusCorrect: 0,
   bonusWrong: 0,
+  bonusPlayed: false,
 };
 
 // ==================== QUESTIONS ====================
-const POINTS_PER_QUESTION = 10;
-const BONUS_POINTS_CORRECT = 15;
-const BONUS_POINTS_WRONG = -10;
-
 const mainQuestions = [
   { cat:'culture', catLabel:'ثقافة عامة', text:'إيه اسم أول رئيس لجمهورية مصر العربية؟', options:['محمد نجيب','جمال عبدالناصر','أنور السادات','حسني مبارك'], correct:0 },
   { cat:'sport', catLabel:'رياضة ومعادلة', text:'كام لاعب في فريق كرة القدم داخل الملعب؟', options:['9','10','11','12'], correct:2 },
@@ -1129,99 +1131,6 @@ const bonusQuestions = [
   { text:'مين اللي اخترع المصباح الكهربائي؟', options:['نيوتن','أديسون','أينشتاين','تسلا'], correct:1 },
   { text:'كام لون في قوس قزح؟', options:['5','6','7','8'], correct:2 },
 ];
-
-// ==================== EGYPTIAN PHRASES BY TIER ====================
-const egyptianPhrases = {
-  excellent: [
-    "يا نهار أبيض، ده انت جامد يا معلم!",
-    "تسلم الأيادي بجد يا وحش",
-    "ما شاء الله عليك، مفيش كلام",
-    "ده احنا قدام عبقري ولا إيه؟"
-  ],
-  verygood: [
-    "مش بطال خالص، كمّل كده",
-    "تمام يا كبير، شغل نضيف",
-    "لسه شوية وتبقى فوق الكل",
-    "حلو أوي، بس المرة الجاية كمّلها امتياز"
-  ],
-  good: [
-    "تمام كده، خلاص كفاية عليك",
-    "معقول يعني، مش وحش",
-    "على قد الحال، ولا يهمك",
-    "خدت نص الطريق، كمّل الباقي"
-  ],
-  weak: [
-    "يا سيدي إحنا مش هنقفل الملف كده",
-    "معلش يا كبير، وسّع دماغك شوية",
-    "فيه حاجة غلط في المذاكرة يا صاحبي",
-    "لسه قدامك مشوار يا نجم"
-  ],
-  rejected: [
-    "ارجع زي ما جيت يا باشا",
-    "يلا يفتح الله، بكرة أحسن",
-    "الملف اتقفل، جرب تاني يا كبير",
-    "معلش، مش كل مرة بتسلم الجرة"
-  ]
-};
-
-// ==================== CENTRAL TIER CALCULATOR ====================
-/**
- * Calculates the tier, stamp config, and phrase based on player score and max possible score.
- * @param {number} playerScore - The player's actual total score
- * @param {number} maxPossibleScore - The maximum possible score (calculated from questions)
- * @returns {{tier: string, stampClass: string, stampText: string, phrase: string}}
- */
-function calculateTier(playerScore, maxPossibleScore) {
-  // Calculate percentage, clamped between 0 and 100
-  let percentage = maxPossibleScore > 0 ? (playerScore / maxPossibleScore) * 100 : 0;
-  percentage = Math.max(0, Math.min(100, percentage));
-  
-  let tier, stampClass, stampText, phraseArray;
-  
-  if (percentage >= 90) {
-    tier = 'excellent';
-    stampClass = 'tier-excellent';
-    stampText = 'امتياز';
-    phraseArray = egyptianPhrases.excellent;
-  } else if (percentage >= 75) {
-    tier = 'verygood';
-    stampClass = 'tier-verygood';
-    stampText = 'جيد جدًا';
-    phraseArray = egyptianPhrases.verygood;
-  } else if (percentage >= 50) {
-    tier = 'good';
-    stampClass = 'tier-good';
-    stampText = 'مقبول';
-    phraseArray = egyptianPhrases.good;
-  } else if (percentage >= 25) {
-    tier = 'weak';
-    stampClass = 'tier-weak';
-    stampText = 'ضعيف';
-    phraseArray = egyptianPhrases.weak;
-  } else {
-    tier = 'rejected';
-    stampClass = 'tier-rejected';
-    stampText = 'مرفوض';
-    phraseArray = egyptianPhrases.rejected;
-  }
-  
-  // Pick a random phrase from the tier's array
-  const randomIndex = Math.floor(Math.random() * phraseArray.length);
-  const phrase = phraseArray[randomIndex];
-  
-  return { tier, stampClass, stampText, phrase };
-}
-
-/**
- * Calculates the maximum possible score based on current questions configuration.
- * @returns {number}
- */
-function calculateMaxPossibleScore() {
-  const mainMax = mainQuestions.length * POINTS_PER_QUESTION;
-  // Bonus round: max is all correct (one question worth BONUS_POINTS_CORRECT)
-  const bonusMax = BONUS_POINTS_CORRECT;
-  return mainMax + bonusMax;
-}
 
 // ==================== SOUND SYSTEM ====================
 let audioCtx = null;
@@ -1251,7 +1160,6 @@ const Sound = {
 
   stamp(type) {
     playSound(ctx => {
-      // Noise burst
       const bufSize = ctx.sampleRate * 0.15;
       const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
       const data = buf.getChannelData(0);
@@ -1264,7 +1172,6 @@ const Sound = {
       noise.connect(noiseGain).connect(ctx.destination);
       noise.start(); noise.stop(ctx.currentTime + 0.15);
 
-      // Low thump
       const osc = ctx.createOscillator();
       const oscGain = ctx.createGain();
       osc.type = 'sine';
@@ -1320,7 +1227,6 @@ const Sound = {
       bp.type = 'bandpass';
       bp.frequency.value = 1000;
       bp.Q.value = 0.5;
-      // Sweep frequency
       bp.frequency.linearRampToValueAtTime(4000, ctx.currentTime + 0.6);
       const gain = ctx.createGain();
       gain.gain.value = 0.12;
@@ -1337,7 +1243,6 @@ function toggleMute() {
   localStorage.setItem('diwanMuted', state.isMuted);
   document.getElementById('muteBtn').textContent = state.isMuted ? '🔇' : '🔊';
 }
-// Init mute button
 if (state.isMuted) document.getElementById('muteBtn').textContent = '🔇';
 
 // ==================== SCREEN TRANSITIONS ====================
@@ -1385,22 +1290,32 @@ function checkEntryForm() {
   document.getElementById('formGlow').classList.toggle('active', name && hasAvatar);
 }
 
-// Photo upload
+// ==================== PHOTO UPLOAD ====================
 document.getElementById('photoInput').addEventListener('change', function(e) {
   const file = e.target.files[0];
   if (!file) return;
   const reader = new FileReader();
+  
   reader.onload = function(ev) {
     state.playerPhoto = ev.target.result;
-    // Update photo slot
-    const slot = document.getElementById('photoSlot');
-    slot.innerHTML = `<img src="${ev.target.result}" alt="صورة اللاعب">`;
+    
+    const entrySlot = document.getElementById('photoSlot');
+    if (entrySlot) {
+      entrySlot.innerHTML = `<img src="${ev.target.result}" alt="صورة اللاعب">`;
+    }
+    
+    const certSlot = document.getElementById('certPhotoSlot');
+    if (certSlot) {
+      certSlot.innerHTML = `<img src="${ev.target.result}" alt="صورة اللاعب">`;
+    }
+    
     Sound.penTap();
   };
+  
   reader.readAsDataURL(file);
+  e.target.value = '';
 });
 
-// ==================== START GAME ====================
 function startGame() {
   state.playerName = document.getElementById('nameInput').value.trim();
   Sound.stamp('success');
@@ -1423,22 +1338,17 @@ function loadQuestion(index) {
   const q = mainQuestions[index];
   questionStartTime = Date.now();
 
-  // Card slide animation
   const card = document.getElementById('questionCard');
   card.classList.remove('card-slide-in', 'card-slide-out');
-  void card.offsetWidth; // force reflow
+  void card.offsetWidth;
   card.classList.add('card-slide-in');
   Sound.paperRustle();
 
-  // Category badge
   const badge = document.getElementById('catBadge');
   badge.textContent = q.catLabel;
   badge.className = 'cat-badge cat-' + q.cat;
-
-  // Question text
   document.getElementById('questionText').textContent = q.text;
 
-  // Options
   const grid = document.getElementById('optionsGrid');
   grid.innerHTML = '';
   q.options.forEach((opt, i) => {
@@ -1449,15 +1359,11 @@ function loadQuestion(index) {
     grid.appendChild(btn);
   });
 
-  // Reset stamp
   const stamp = document.getElementById('stampOverlay');
   stamp.className = 'stamp-overlay';
   stamp.textContent = '';
-
-  // Reset powerup visual
   document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('strikethrough'));
 
-  // Start timer
   startTimer();
 }
 
@@ -1468,14 +1374,11 @@ function startTimer() {
   updateCandleVisual();
 
   timerInterval = setInterval(() => {
-    if (state.freezeActive) return; // timer frozen
+    if (state.freezeActive) return; 
     timeLeft--;
     updateTimerDisplay();
     updateCandleVisual();
-
-    // Tick sound for last 3 seconds
     if (timeLeft <= 3 && timeLeft > 0) Sound.tick();
-
     if (timeLeft <= 0) {
       clearInterval(timerInterval);
       handleTimeout();
@@ -1483,33 +1386,26 @@ function startTimer() {
   }, 1000);
 }
 
-function updateTimerDisplay() {
-  document.getElementById('candleTime').textContent = Math.max(0, timeLeft);
-}
+function updateTimerDisplay() { document.getElementById('candleTime').textContent = Math.max(0, timeLeft); }
 
 function updateCandleVisual() {
   const pct = Math.max(0, timeLeft / QUESTION_TIME);
-  // Shrink candle wax
   const wax = document.getElementById('candleWax');
   const maxHeight = 20;
   const curHeight = maxHeight * pct;
   wax.setAttribute('height', curHeight);
   wax.setAttribute('y', 20 + (maxHeight - curHeight));
 
-  // Flame urgency
   const flame = document.getElementById('flameGroup');
   if (pct < 0.33) {
     flame.classList.remove('flame-normal');
     flame.classList.add('flame-urgent');
-    // Change flame color to more red
     document.getElementById('candleTime').style.color = 'var(--diwan-error)';
   } else {
     flame.classList.remove('flame-urgent');
     flame.classList.add('flame-normal');
     document.getElementById('candleTime').style.color = 'var(--diwan-ink)';
   }
-
-  // Flame visibility
   flame.style.opacity = timeLeft > 0 ? '1' : '0';
 }
 
@@ -1518,16 +1414,13 @@ function handleTimeout() {
   state.currentStreak = 0;
   document.getElementById('streakNum').textContent = state.currentStreak;
 
-  // Show wrong stamp
   showStamp('error', 'غلط');
   Sound.stamp('error');
 
-  // Shake card
   const card = document.getElementById('questionCard');
   card.classList.add('shake');
   setTimeout(() => card.classList.remove('shake'), 400);
 
-  // Highlight correct answer
   const q = mainQuestions[state.currentQuestion];
   const btns = document.querySelectorAll('#optionsGrid .option-btn');
   btns.forEach((b, i) => {
@@ -1535,7 +1428,6 @@ function handleTimeout() {
     if (i === q.correct) b.classList.add('correct');
   });
 
-  // Move to next after delay
   setTimeout(() => advanceQuestion(), 1500);
 }
 
@@ -1547,13 +1439,11 @@ function selectAnswer(index) {
 
   const answerTime = (Date.now() - questionStartTime) / 1000;
   state.answerTimes.push(answerTime);
-
-  // Disable all buttons
   btns.forEach(b => b.disabled = true);
 
   if (isCorrect) {
     state.correctCount++;
-    state.mainScore += POINTS_PER_QUESTION;
+    state.mainScore += GAME_POINTS.mainCorrect;
     state.currentStreak++;
     if (state.currentStreak > state.maxStreak) state.maxStreak = state.currentStreak;
     document.getElementById('streakNum').textContent = state.currentStreak;
@@ -1561,12 +1451,9 @@ function selectAnswer(index) {
     btns[index].classList.add('correct');
     showStamp('success', 'صح');
     Sound.stamp('success');
-    showFloatPoints('+' + POINTS_PER_QUESTION);
+    showFloatPoints('+' + GAME_POINTS.mainCorrect);
 
-    // Streak notification every 3
-    if (state.currentStreak > 0 && state.currentStreak % 3 === 0) {
-      showStreakNotif(state.currentStreak);
-    }
+    if (state.currentStreak > 0 && state.currentStreak % 3 === 0) showStreakNotif(state.currentStreak);
   } else {
     state.wrongCount++;
     state.currentStreak = 0;
@@ -1577,14 +1464,12 @@ function selectAnswer(index) {
     showStamp('error', 'غلط');
     Sound.stamp('error');
 
-    // Shake card
     const card = document.getElementById('questionCard');
     card.classList.add('shake');
     setTimeout(() => card.classList.remove('shake'), 400);
   }
 
   Sound.penTap();
-
   setTimeout(() => advanceQuestion(), 1500);
 }
 
@@ -1593,7 +1478,6 @@ function advanceQuestion() {
   card.classList.remove('card-slide-in');
   card.classList.add('card-slide-out');
   Sound.paperRustle();
-
   setTimeout(() => {
     card.classList.remove('card-slide-out');
     loadQuestion(state.currentQuestion + 1);
@@ -1628,19 +1512,14 @@ function showStreakNotif(streak) {
   setTimeout(() => el.remove(), 1500);
 }
 
-// ==================== POWER-UPS ====================
 function useFiftyFifty() {
   if (!state.hasFifty) return;
   state.hasFifty = false;
   document.getElementById('btnFifty').disabled = true;
   Sound.penTap();
-
   const q = mainQuestions[state.currentQuestion];
   const btns = document.querySelectorAll('#optionsGrid .option-btn');
-  // Find 2 wrong options to remove
-  let removed = 0;
   const indices = [0,1,2,3].filter(i => i !== q.correct);
-  // Shuffle
   for (let i = indices.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [indices[i], indices[j]] = [indices[j], indices[i]];
@@ -1657,21 +1536,14 @@ function useFreeze() {
   document.getElementById('btnFreeze').disabled = true;
   state.freezeActive = true;
   Sound.penTap();
-
-  // Add freeze badge
   const btn = document.getElementById('btnFreeze');
   const badge = document.createElement('span');
   badge.className = 'freeze-badge';
   badge.textContent = 'ثابت';
   btn.appendChild(badge);
-
-  setTimeout(() => {
-    state.freezeActive = false;
-    badge.remove();
-  }, 4000);
+  setTimeout(() => { state.freezeActive = false; badge.remove(); }, 4000);
 }
 
-// ==================== END MAIN GAME ====================
 function endMainGame() {
   clearInterval(timerInterval);
   switchScreen('screenGame', 'screenBonus');
@@ -1690,6 +1562,7 @@ function initBonusStamps() {
 }
 
 function startBonusPlay() {
+  state.bonusPlayed = true;
   Sound.stamp('success');
   document.getElementById('bonusIntro').style.display = 'none';
   document.getElementById('bonusPlay').style.display = 'block';
@@ -1702,6 +1575,7 @@ function startBonusPlay() {
 }
 
 function skipBonus() {
+  state.bonusPlayed = false;
   Sound.penTap();
   state.bonusScore = 0;
   goToCertificate();
@@ -1734,12 +1608,9 @@ function loadBonusQuestion(index) {
     grid.appendChild(btn);
   });
 
-  // Reset stamp
   const stamp = document.getElementById('bonusStamp');
   stamp.className = 'stamp-overlay';
   stamp.textContent = '';
-
-  // Start bonus timer
   startBonusTimer();
 }
 
@@ -1761,10 +1632,9 @@ function startBonusTimer() {
 
 function handleBonusTimeout() {
   state.bonusWrong++;
-  state.bonusScore -= 10;
+  state.bonusScore -= GAME_POINTS.bonusWrong;
   const q = bonusQuestions[state.bonusCurrentQ];
 
-  // Update stamp
   const stampEl = document.getElementById('bonusStamp' + state.bonusCurrentQ);
   stampEl.classList.add('done', 'wrong-stamp');
 
@@ -1776,7 +1646,6 @@ function handleBonusTimeout() {
 
   showBonusStamp('error', 'غلط');
   Sound.stamp('error');
-
   updateBonusScoreDisplay('red');
   setTimeout(() => advanceBonusQuestion(), 1500);
 }
@@ -1791,25 +1660,21 @@ function selectBonusAnswer(index) {
 
   if (isCorrect) {
     state.bonusCorrect++;
-    state.bonusScore += BONUS_POINTS_CORRECT;
+    state.bonusScore += GAME_POINTS.bonusCorrect;
     btns[index].classList.add('correct');
     showBonusStamp('success', 'صح');
     Sound.stamp('success');
-    showFloatPoints('+' + BONUS_POINTS_CORRECT);
-
-    const stampEl = document.getElementById('bonusStamp' + state.bonusCurrentQ);
-    stampEl.classList.add('done', 'correct-stamp');
+    showFloatPoints('+' + GAME_POINTS.bonusCorrect);
+    document.getElementById('bonusStamp' + state.bonusCurrentQ).classList.add('done', 'correct-stamp');
   } else {
     state.bonusWrong++;
-    state.bonusScore += BONUS_POINTS_WRONG;
+    state.bonusScore -= GAME_POINTS.bonusWrong;
     btns[index].classList.add('wrong');
     btns[q.correct].classList.add('correct');
     showBonusStamp('error', 'غلط');
     Sound.stamp('error');
-
-    const stampEl = document.getElementById('bonusStamp' + state.bonusCurrentQ);
-    stampEl.classList.add('done', 'wrong-stamp');
-
+    document.getElementById('bonusStamp' + state.bonusCurrentQ).classList.add('done', 'wrong-stamp');
+    
     const card = document.getElementById('bonusCard');
     card.classList.add('shake');
     setTimeout(() => card.classList.remove('shake'), 400);
@@ -1817,7 +1682,6 @@ function selectBonusAnswer(index) {
 
   Sound.penTap();
   updateBonusScoreDisplay(isCorrect ? 'green' : 'red');
-
   setTimeout(() => advanceBonusQuestion(), 1500);
 }
 
@@ -1852,17 +1716,78 @@ function endBonusRound() {
   clearInterval(bonusTimerInterval);
   document.getElementById('bonusPlay').style.display = 'none';
   document.getElementById('bonusEnd').style.display = 'block';
-
-  // Animate counter
   animateCounter('bonusFinalScore', state.bonusScore, 800);
-
-  // Final stamp
   const wrap = document.getElementById('bonusFinalStampWrap');
   if (state.bonusScore > 0) {
     wrap.innerHTML = '<div class="bonus-final-stamp accepted">مقبول</div>';
   } else {
     wrap.innerHTML = '<div class="bonus-final-stamp rejected">مرفوض</div>';
   }
+}
+
+// ==================== DYNAMIC EVALUATION SYSTEM ====================
+const EVAL_PHRASES = {
+  excellent: [
+    "يا نهار أبيض، ده انت جامد يا معلم!",
+    "تسلم الأيادي بجد يا وحش",
+    "ما شاء الله عليك، مفيش كلام",
+    "ده احنا قدام عبقري ولا إيه؟"
+  ],
+  vgood: [
+    "مش بطال خالص، كمّل كده",
+    "تمام يا كبير، شغل نضيف",
+    "لسه شوية وتبقى فوق الكل",
+    "حلو أوي، بس المرة الجاية كمّلها امتياز"
+  ],
+  acceptable: [
+    "تمام كده، خلاص كفاية عليك",
+    "معقول يعني، مش وحش",
+    "على قد الحال، ولا يهمك",
+    "خدت نص الطريق، كمّل الباقي"
+  ],
+  weak: [
+    "يا سيدي إحنا مش هنقفل الملف كده",
+    "معلش يا كبير، وسّع دماغك شوية",
+    "فيه حاجة غلط في المذاكرة يا صاحبي",
+    "لسه قدامك مشوار يا نجم"
+  ],
+  rejected: [
+    "ارجع زي ما جيت يا باشا",
+    "يلا يفتح الله، بكرة أحسن",
+    "الملف اتقفل، جرب تاني يا كبير",
+    "معلش، مش كل مرة بتسلم الجرة"
+  ]
+};
+
+function getEvaluationData(playerScore, maxPossibleScore) {
+  let percentage = (playerScore / maxPossibleScore) * 100;
+  if (percentage < 0) percentage = 0;
+  if (percentage > 100) percentage = 100;
+
+  let tier = '';
+  let stampConfig = {};
+
+  if (percentage >= 90) {
+    tier = 'excellent';
+    stampConfig = { text: 'امتياز', shapeClass: 'stamp-excellent' };
+  } else if (percentage >= 75) {
+    tier = 'vgood';
+    stampConfig = { text: 'جيد جدًا', shapeClass: 'stamp-vgood' };
+  } else if (percentage >= 50) {
+    tier = 'acceptable';
+    stampConfig = { text: 'مقبول', shapeClass: 'stamp-acceptable' };
+  } else if (percentage >= 25) {
+    tier = 'weak';
+    stampConfig = { text: 'ضعيف', shapeClass: 'stamp-weak' };
+  } else {
+    tier = 'rejected';
+    stampConfig = { text: 'مرفوض', shapeClass: 'stamp-rejected' };
+  }
+
+  const phrases = EVAL_PHRASES[tier];
+  const phrase = phrases[Math.floor(Math.random() * phrases.length)];
+
+  return { percentage, stampConfig, phrase };
 }
 
 // ==================== CERTIFICATE ====================
@@ -1878,39 +1803,31 @@ function renderCertificate() {
   const container = document.getElementById('certContainer');
   container.classList.add('unroll');
 
-  // Name
   document.getElementById('certName').textContent = state.playerName;
 
-  // Photo
   if (state.playerPhoto) {
     const slot = document.getElementById('certPhotoSlot');
     slot.innerHTML = `<img src="${state.playerPhoto}" alt="صورة اللاعب">`;
   }
 
-  // Score counter animation
+  let maxPossibleScore = mainQuestions.length * GAME_POINTS.mainCorrect;
+  if (state.bonusPlayed) {
+    maxPossibleScore += bonusQuestions.length * GAME_POINTS.bonusCorrect;
+  }
+
+  const evalData = getEvaluationData(state.totalScore, maxPossibleScore);
+
+  document.getElementById('certPhrase').textContent = evalData.phrase;
+
+  const stampEl = document.getElementById('certStamp');
+  stampEl.textContent = evalData.stampConfig.text;
+  stampEl.className = 'cert-stamp ' + evalData.stampConfig.shapeClass;
+  stampEl.style.animation = 'none';
+  void stampEl.offsetWidth;
+  stampEl.style.animation = '';
+
   animateCounter('certScoreNum', state.totalScore, 1200);
 
-  // Calculate tier using central function
-  const maxPossible = calculateMaxPossibleScore();
-  const tierResult = calculateTier(state.totalScore, maxPossible);
-
-  // Apply stamp class and text with delay after score animation
-  setTimeout(() => {
-    const stampEl = document.getElementById('certStamp');
-    stampEl.className = 'cert-stamp ' + tierResult.stampClass;
-    stampEl.textContent = tierResult.stampText;
-    Sound.stamp('success');
-  }, 1200);
-
-  // Egyptian phrase with delay after stamp
-  setTimeout(() => {
-    const phraseEl = document.getElementById('certPhrase');
-    phraseEl.textContent = tierResult.phrase;
-    phraseEl.style.animationDelay = '0s';
-    Sound.penTap();
-  }, 1700);
-
-  // Badges
   const badges = calculateBadges();
   const row = document.getElementById('badgesRow');
   row.innerHTML = '';
@@ -1918,7 +1835,7 @@ function renderCertificate() {
     const el = document.createElement('span');
     el.className = 'badge';
     el.textContent = badge;
-    el.style.animationDelay = (2.0 + i * 0.2) + 's';
+    el.style.animationDelay = (0.8 + i * 0.2) + 's';
     row.appendChild(el);
   });
 }
@@ -1943,7 +1860,6 @@ function animateCounter(elementId, target, duration) {
   function update() {
     const elapsed = Date.now() - startTime;
     const progress = Math.min(elapsed / duration, 1);
-    // Ease out
     const eased = 1 - Math.pow(1 - progress, 3);
     el.textContent = Math.round(start + (target - start) * eased);
     if (progress < 1) requestAnimationFrame(update);
@@ -1958,7 +1874,6 @@ function shareCert() {
   if (navigator.share) {
     navigator.share({ title: 'الديوان', text }).catch(() => {});
   } else {
-    // Fallback: copy to clipboard
     navigator.clipboard.writeText(text).then(() => {
       alert('تم النسخ!');
     }).catch(() => {
@@ -1974,17 +1889,24 @@ function downloadCert() {
     alert('html2canvas غير متوفر');
     return;
   }
-  html2canvas(cert, {
-    backgroundColor: null,
-    scale: 2,
-    useCORS: true,
-  }).then(canvas => {
-    const link = document.createElement('a');
-    link.download = 'diwan-certificate.png';
-    link.href = canvas.toDataURL('image/png');
-    link.click();
-  }).catch(err => {
-    console.error('Download error:', err);
+  
+  // التأكد من تحميل الخطوط والعناصر تماماً ومنع ترحيل الموضع
+  document.fonts.ready.then(() => {
+    window.scrollTo(0, 0);
+    html2canvas(cert, {
+      backgroundColor: null,
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      scrollY: -window.scrollY
+    }).then(canvas => {
+      const link = document.createElement('a');
+      link.download = 'diwan-certificate.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }).catch(err => {
+      console.error('Download error:', err);
+    });
   });
 }
 </script>
