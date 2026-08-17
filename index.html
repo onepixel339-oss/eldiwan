@@ -715,10 +715,13 @@ body::before {
 }
 
 .cert-photo-slot {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  border: 2px dashed var(--diwan-kraft);
+  width: 90px;
+  height: 120px;
+  aspect-ratio: 3/4;
+  border-radius: 6px;
+  border: 3px solid var(--diwan-ink);
+  outline: 1.5px solid var(--diwan-kraft);
+  outline-offset: -4px;
   margin: 0 auto 12px;
   overflow: hidden;
   cursor: pointer;
@@ -764,21 +767,88 @@ body::before {
   color: var(--diwan-ink-soft);
 }
 
-/* Accept stamp */
+/* Tiered stamps */
 .cert-stamp {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  border: 3px solid var(--diwan-success);
-  color: var(--diwan-success);
   font-family: var(--font-display);
-  font-size: 1rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 8px 16px;
   margin: 12px auto;
   animation: boomStamp 0.6s var(--ease-diwan) forwards;
 }
+
+/* امتياز 90-100%: ذهبي/كهرماني غامق، دائرة مزدوجة بحواف مسننة */
+.cert-stamp.tier-excellent {
+  color: #B8860B;
+  border: 3px solid #B8860B;
+  background: rgba(184,134,11,0.08);
+  border-radius: 50%;
+  width: 90px;
+  height: 90px;
+  position: relative;
+}
+.cert-stamp.tier-excellent::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px dashed #C69A44;
+  animation: rotateSlow 20s linear infinite;
+}
+@keyframes rotateSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* جيد جدًا 75-89%: أخضر، دائرة عادية */
+.cert-stamp.tier-verygood {
+  color: var(--diwan-success);
+  border: 3px solid var(--diwan-success);
+  background: rgba(46,110,69,0.08);
+  border-radius: 50%;
+  width: 85px;
+  height: 85px;
+}
+
+/* مقبول 50-74%: كحلي، مستطيل بسيط */
+.cert-stamp.tier-good {
+  color: var(--diwan-ink);
+  border: 2px solid var(--diwan-ink);
+  background: rgba(38,52,74,0.06);
+  border-radius: 4px;
+  padding: 8px 20px;
+}
+
+/* ضعيف 25-49%: برتقالي محروق، مستطيل بحدود متقطعة */
+.cert-stamp.tier-weak {
+  color: #CC5500;
+  border: 2px dashed #CC5500;
+  background: rgba(204,85,0,0.06);
+  border-radius: 4px;
+  padding: 8px 18px;
+}
+
+/* مرفوض 0-24%: أحمر، مستطيل بخط قطري */
+.cert-stamp.tier-rejected {
+  color: var(--diwan-error);
+  border: 2px solid var(--diwan-error);
+  background: rgba(166,54,42,0.06);
+  border-radius: 4px;
+  padding: 8px 18px;
+  position: relative;
+  overflow: visible;
+}
+.cert-stamp.tier-rejected::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 120%;
+  height: 2px;
+  background: var(--diwan-error);
+  transform: translate(-50%, -50%) rotate(-25deg);
+}
+
 @keyframes boomStamp {
   0% { transform: scale(0) rotate(-30deg); opacity: 0; }
   50% { transform: scale(1.2) rotate(5deg); opacity: 1; }
@@ -804,6 +874,20 @@ body::before {
 }
 @keyframes badgeIn {
   from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Egyptian phrase */
+.cert-phrase {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--diwan-burnt);
+  margin-top: 8px;
+  opacity: 0;
+  animation: fadeUp 0.5s var(--ease-diwan) forwards;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -991,6 +1075,7 @@ body::before {
           <div class="cert-score-label">نقطة</div>
         </div>
         <div class="cert-stamp" id="certStamp">مقبول</div>
+        <div class="cert-phrase" id="certPhrase"></div>
         <div class="badges-row" id="badgesRow"></div>
       </div>
     </div>
@@ -1026,6 +1111,10 @@ const state = {
 };
 
 // ==================== QUESTIONS ====================
+const POINTS_PER_QUESTION = 10;
+const BONUS_POINTS_CORRECT = 15;
+const BONUS_POINTS_WRONG = -10;
+
 const mainQuestions = [
   { cat:'culture', catLabel:'ثقافة عامة', text:'إيه اسم أول رئيس لجمهورية مصر العربية؟', options:['محمد نجيب','جمال عبدالناصر','أنور السادات','حسني مبارك'], correct:0 },
   { cat:'sport', catLabel:'رياضة ومعادلة', text:'كام لاعب في فريق كرة القدم داخل الملعب؟', options:['9','10','11','12'], correct:2 },
@@ -1040,6 +1129,99 @@ const bonusQuestions = [
   { text:'مين اللي اخترع المصباح الكهربائي؟', options:['نيوتن','أديسون','أينشتاين','تسلا'], correct:1 },
   { text:'كام لون في قوس قزح؟', options:['5','6','7','8'], correct:2 },
 ];
+
+// ==================== EGYPTIAN PHRASES BY TIER ====================
+const egyptianPhrases = {
+  excellent: [
+    "يا نهار أبيض، ده انت جامد يا معلم!",
+    "تسلم الأيادي بجد يا وحش",
+    "ما شاء الله عليك، مفيش كلام",
+    "ده احنا قدام عبقري ولا إيه؟"
+  ],
+  verygood: [
+    "مش بطال خالص، كمّل كده",
+    "تمام يا كبير، شغل نضيف",
+    "لسه شوية وتبقى فوق الكل",
+    "حلو أوي، بس المرة الجاية كمّلها امتياز"
+  ],
+  good: [
+    "تمام كده، خلاص كفاية عليك",
+    "معقول يعني، مش وحش",
+    "على قد الحال، ولا يهمك",
+    "خدت نص الطريق، كمّل الباقي"
+  ],
+  weak: [
+    "يا سيدي إحنا مش هنقفل الملف كده",
+    "معلش يا كبير، وسّع دماغك شوية",
+    "فيه حاجة غلط في المذاكرة يا صاحبي",
+    "لسه قدامك مشوار يا نجم"
+  ],
+  rejected: [
+    "ارجع زي ما جيت يا باشا",
+    "يلا يفتح الله، بكرة أحسن",
+    "الملف اتقفل، جرب تاني يا كبير",
+    "معلش، مش كل مرة بتسلم الجرة"
+  ]
+};
+
+// ==================== CENTRAL TIER CALCULATOR ====================
+/**
+ * Calculates the tier, stamp config, and phrase based on player score and max possible score.
+ * @param {number} playerScore - The player's actual total score
+ * @param {number} maxPossibleScore - The maximum possible score (calculated from questions)
+ * @returns {{tier: string, stampClass: string, stampText: string, phrase: string}}
+ */
+function calculateTier(playerScore, maxPossibleScore) {
+  // Calculate percentage, clamped between 0 and 100
+  let percentage = maxPossibleScore > 0 ? (playerScore / maxPossibleScore) * 100 : 0;
+  percentage = Math.max(0, Math.min(100, percentage));
+  
+  let tier, stampClass, stampText, phraseArray;
+  
+  if (percentage >= 90) {
+    tier = 'excellent';
+    stampClass = 'tier-excellent';
+    stampText = 'امتياز';
+    phraseArray = egyptianPhrases.excellent;
+  } else if (percentage >= 75) {
+    tier = 'verygood';
+    stampClass = 'tier-verygood';
+    stampText = 'جيد جدًا';
+    phraseArray = egyptianPhrases.verygood;
+  } else if (percentage >= 50) {
+    tier = 'good';
+    stampClass = 'tier-good';
+    stampText = 'مقبول';
+    phraseArray = egyptianPhrases.good;
+  } else if (percentage >= 25) {
+    tier = 'weak';
+    stampClass = 'tier-weak';
+    stampText = 'ضعيف';
+    phraseArray = egyptianPhrases.weak;
+  } else {
+    tier = 'rejected';
+    stampClass = 'tier-rejected';
+    stampText = 'مرفوض';
+    phraseArray = egyptianPhrases.rejected;
+  }
+  
+  // Pick a random phrase from the tier's array
+  const randomIndex = Math.floor(Math.random() * phraseArray.length);
+  const phrase = phraseArray[randomIndex];
+  
+  return { tier, stampClass, stampText, phrase };
+}
+
+/**
+ * Calculates the maximum possible score based on current questions configuration.
+ * @returns {number}
+ */
+function calculateMaxPossibleScore() {
+  const mainMax = mainQuestions.length * POINTS_PER_QUESTION;
+  // Bonus round: max is all correct (one question worth BONUS_POINTS_CORRECT)
+  const bonusMax = BONUS_POINTS_CORRECT;
+  return mainMax + bonusMax;
+}
 
 // ==================== SOUND SYSTEM ====================
 let audioCtx = null;
@@ -1371,7 +1553,7 @@ function selectAnswer(index) {
 
   if (isCorrect) {
     state.correctCount++;
-    state.mainScore += 10;
+    state.mainScore += POINTS_PER_QUESTION;
     state.currentStreak++;
     if (state.currentStreak > state.maxStreak) state.maxStreak = state.currentStreak;
     document.getElementById('streakNum').textContent = state.currentStreak;
@@ -1379,7 +1561,7 @@ function selectAnswer(index) {
     btns[index].classList.add('correct');
     showStamp('success', 'صح');
     Sound.stamp('success');
-    showFloatPoints('+10');
+    showFloatPoints('+' + POINTS_PER_QUESTION);
 
     // Streak notification every 3
     if (state.currentStreak > 0 && state.currentStreak % 3 === 0) {
@@ -1609,17 +1791,17 @@ function selectBonusAnswer(index) {
 
   if (isCorrect) {
     state.bonusCorrect++;
-    state.bonusScore += 15;
+    state.bonusScore += BONUS_POINTS_CORRECT;
     btns[index].classList.add('correct');
     showBonusStamp('success', 'صح');
     Sound.stamp('success');
-    showFloatPoints('+15');
+    showFloatPoints('+' + BONUS_POINTS_CORRECT);
 
     const stampEl = document.getElementById('bonusStamp' + state.bonusCurrentQ);
     stampEl.classList.add('done', 'correct-stamp');
   } else {
     state.bonusWrong++;
-    state.bonusScore -= 10;
+    state.bonusScore += BONUS_POINTS_WRONG;
     btns[index].classList.add('wrong');
     btns[q.correct].classList.add('correct');
     showBonusStamp('error', 'غلط');
@@ -1708,6 +1890,26 @@ function renderCertificate() {
   // Score counter animation
   animateCounter('certScoreNum', state.totalScore, 1200);
 
+  // Calculate tier using central function
+  const maxPossible = calculateMaxPossibleScore();
+  const tierResult = calculateTier(state.totalScore, maxPossible);
+
+  // Apply stamp class and text with delay after score animation
+  setTimeout(() => {
+    const stampEl = document.getElementById('certStamp');
+    stampEl.className = 'cert-stamp ' + tierResult.stampClass;
+    stampEl.textContent = tierResult.stampText;
+    Sound.stamp('success');
+  }, 1200);
+
+  // Egyptian phrase with delay after stamp
+  setTimeout(() => {
+    const phraseEl = document.getElementById('certPhrase');
+    phraseEl.textContent = tierResult.phrase;
+    phraseEl.style.animationDelay = '0s';
+    Sound.penTap();
+  }, 1700);
+
   // Badges
   const badges = calculateBadges();
   const row = document.getElementById('badgesRow');
@@ -1716,7 +1918,7 @@ function renderCertificate() {
     const el = document.createElement('span');
     el.className = 'badge';
     el.textContent = badge;
-    el.style.animationDelay = (0.8 + i * 0.2) + 's';
+    el.style.animationDelay = (2.0 + i * 0.2) + 's';
     row.appendChild(el);
   });
 }
